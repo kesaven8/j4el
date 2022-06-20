@@ -1,0 +1,4 @@
+# Project exclude paths
+/open-api/target/
+/persistance/target/
+/rest/target/
