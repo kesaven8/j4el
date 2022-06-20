@@ -17,7 +17,7 @@
 
     <modules>
         <module>rest</module>
-        <module>persistance</module>
+        <module>persistence</module>
         <module>service</module>
     </modules>
 
