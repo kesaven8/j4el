@@ -19,6 +19,7 @@
         <module>rest</module>
         <module>persistance</module>
         <module>open-api</module>
+        <module>service</module>
     </modules>
 
 
