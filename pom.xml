@@ -17,8 +17,7 @@
 
     <modules>
         <module>rest</module>
-        <module>persistance</module>
-        <module>open-api</module>
+        <module>persistence</module>
         <module>service</module>
     </modules>
 
@@ -26,6 +25,43 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <open-api.version>6.0.0</open-api.version>
     </properties>
-
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>${open-api.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                            <configuration>
+                                <generatorName>spring</generatorName>
+                                <generateApiDocumentation>false</generateApiDocumentation>
+                                <generateSupportingFiles>true</generateSupportingFiles>
+                                <generateModelDocumentation>false</generateModelDocumentation>
+                                <generateModelTests>false</generateModelTests>
+                                <apiPackage>org.j4el.com.api</apiPackage>
+                                <modelPackage>org.j4el.com.model</modelPackage>
+                                <inputSpec>${project.basedir}/../open-api/api.yaml</inputSpec>
+                                <configOptions>
+                                    <dateLibaray>java8</dateLibaray>
+                                    <interfaceOnly>true</interfaceOnly>
+                                </configOptions>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 </project>
