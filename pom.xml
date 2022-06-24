@@ -26,7 +26,23 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <open-api.version>6.0.0</open-api.version>
+        <io.springfox.version>3.0.0</io.springfox.version>
+        <mapstruck.version>1.5.2.Final</mapstruck.version>
+        <validation.api.version>2.0.1.Final</validation.api.version>
+        <jackson.databind.nullable.version>0.2.2</jackson.databind.nullable.version>
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${mapstruck.version}</version>
+        </dependency>
+    </dependencies>
     <build>
         <resources>
             <resource>
@@ -54,7 +70,7 @@
                                 <modelPackage>org.j4el.com.model</modelPackage>
                                 <inputSpec>${project.basedir}/../open-api/api.yaml</inputSpec>
                                 <configOptions>
-                                    <dateLibaray>java8</dateLibaray>
+                                    <dateLibrary>java8</dateLibrary>
                                     <interfaceOnly>true</interfaceOnly>
                                 </configOptions>
                             </configuration>
