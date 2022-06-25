@@ -1,7 +1,9 @@
 package org.j4el.com.service;
 
-import org.j4el.com.dto.TaskDto;
+
+import org.j4el.com.entity.Task;
+import org.j4el.com.model.CreateTaskDto;
 
 public interface TaskService {
-    public void createTask(TaskDto taskDto);
+    Task createTask(CreateTaskDto createTaskDto);
 }

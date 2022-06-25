@@ -2,7 +2,10 @@ package org.j4el.com.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -12,6 +15,7 @@ import java.time.LocalDateTime;
 @Setter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
+@EntityListeners(value = AuditingEntityListener.class)
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +36,7 @@ public class Task {
     @Basic(optional = false)
     private String location;
 
-    @CreatedBy
+    @CreatedDate
     @Column(name = "CREATED_ON", updatable = false)
     private LocalDateTime createdOn;
 
@@ -46,6 +50,6 @@ public class Task {
     private Status status;
 
     public enum Status {
-        COMPLETED, DUE;
+        COMPLETED, NOT_COMPLETED;
     }
 }
