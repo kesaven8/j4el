@@ -1,4 +1,4 @@
-openapi: "3.0.0"
+openapi: "3.0.3"
 info:
   version: 1.0.0
   title: Task Creation
@@ -8,6 +8,7 @@ servers:
 paths:
   /tasks/create:
     post:
+      operationId: createTask
       requestBody:
         description: Dto for Creating Task
         required: false

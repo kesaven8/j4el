@@ -1,21 +1,23 @@
 package org.j4el.com.entity;
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Setter
+@Entity
 @Getter
+@Setter
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
-@Entity
 public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true,name = "TITLE")
+    @Column(unique = true, name = "TITLE")
     @Basic(optional = false)
     private String title;
 
@@ -30,12 +32,20 @@ public class Task {
     @Basic(optional = false)
     private String location;
 
+    @CreatedBy
+    @Column(name = "CREATED_ON", updatable = false)
+    private LocalDateTime createdOn;
+
+    @Column(name = "UPDATED_ON")
+    @LastModifiedDate
+    private LocalDateTime updateOn;
+
     @Column(name = "STATUS")
     @Basic(optional = false)
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    public enum Status{
+    public enum Status {
         COMPLETED, DUE;
     }
 }
