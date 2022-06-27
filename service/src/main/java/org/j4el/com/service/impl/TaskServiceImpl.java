@@ -12,10 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.function.Function;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-
 import static org.j4el.com.exception.ExceptionMessage.TITLE_ALREADY_EXIST;
 
 @Service
@@ -48,6 +44,4 @@ public class TaskServiceImpl implements TaskService {
             throw new TaskException(TITLE_ALREADY_EXIST.name());
         }
     }
-
-    private Function<Task,String> buildGroupingClassier(String groupBy)
 }
