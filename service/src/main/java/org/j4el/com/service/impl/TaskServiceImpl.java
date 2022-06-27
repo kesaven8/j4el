@@ -6,11 +6,14 @@ import org.j4el.com.mapper.TaskMapper;
 import org.j4el.com.model.CreateTaskDto;
 import org.j4el.com.repository.TaskRepository;
 import org.j4el.com.service.TaskService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.function.Function;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static org.j4el.com.exception.ExceptionMessage.TITLE_ALREADY_EXIST;
@@ -32,9 +35,12 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository.save(task);
     }
 
-    private void findTask() {
-        var tasks = taskRepository.findAll(PageRequest.of(0, 10, Sort.by("scheduledDate")))
-                .stream().collect(Collectors.groupingBy(Task::getScheduledDate));
+    public Page<Task> findTask() {
+        var pageTasks = taskRepository.findAll(PageRequest.of(0, 10, Sort.by("scheduledDate")));
+
+
+        return taskRepository.findAll(PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "scheduledDate")));
+
     }
 
     private void checkTitleUnique(CreateTaskDto taskDto) {
@@ -42,4 +48,6 @@ public class TaskServiceImpl implements TaskService {
             throw new TaskException(TITLE_ALREADY_EXIST.name());
         }
     }
+
+    private Function<Task,String> buildGroupingClassier(String groupBy)
 }
