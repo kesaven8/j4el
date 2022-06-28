@@ -12,12 +12,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static org.j4el.com.exception.ExceptionMessage.TASK_IN_PAST;
 import static org.j4el.com.exception.ExceptionMessage.TITLE_ALREADY_EXIST;
 
 @Service
@@ -34,6 +36,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     public Task createTask(TaskDto taskDto) {
+        checkScheduleDateIsAfter(taskDto);
         checkTitleUnique(taskDto);
         var task = taskMapper.maptoEntity(taskDto);
         return taskRepository.save(task);
@@ -55,6 +58,12 @@ public class TaskServiceImpl implements TaskService {
     private void checkTitleUnique(TaskDto taskDto) {
         if (taskRepository.existsTaskByTitle(taskDto.getTitle())) {
             throw new TaskException(TITLE_ALREADY_EXIST.name());
+        }
+    }
+
+    private void checkScheduleDateIsAfter(TaskDto taskDto) {
+        if (LocalDate.now().isAfter(taskDto.getScheduledDate()) || !LocalDate.now().isEqual(taskDto.getScheduledDate())) {
+            throw new TaskException(TASK_IN_PAST.name());
         }
     }
 

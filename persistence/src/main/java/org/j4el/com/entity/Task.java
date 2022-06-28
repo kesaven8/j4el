@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Builder
 @Entity
 @Getter
 @Setter

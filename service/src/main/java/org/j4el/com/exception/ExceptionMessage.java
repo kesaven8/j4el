@@ -1,5 +1,6 @@
 package org.j4el.com.exception;
 
 public enum ExceptionMessage {
-    TITLE_ALREADY_EXIST
+    TITLE_ALREADY_EXIST,
+    TASK_IN_PAST
 }
