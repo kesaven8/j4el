@@ -2,7 +2,7 @@ package org.j4el.com.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.j4el.com.api.TaskApi;
-import org.j4el.com.model.CreateTaskDto;
+import org.j4el.com.model.TaskDto;
 import org.j4el.com.model.TaskResponseDto;
 import org.j4el.com.service.TaskService;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +18,8 @@ public class TaskController implements TaskApi {
     private final TaskService taskService;
 
     @Override
-    public ResponseEntity<Object> createTask(CreateTaskDto createTaskDto) {
-        return ResponseEntity.created(URI.create("/task/" + taskService.createTask(createTaskDto).getId())).build();
+    public ResponseEntity<Object> createTask(TaskDto taskDto) {
+        return ResponseEntity.created(URI.create("/task/" + taskService.createTask(taskDto).getId())).build();
     }
 
     @Override

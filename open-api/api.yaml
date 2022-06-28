@@ -15,7 +15,7 @@ paths:
         content:
           'application/json':
             schema:
-              $ref: '#/components/schemas/CreateTaskDto'
+              $ref: '#/components/schemas/TaskDto'
       responses:
         201:
           description: Task Created Successfully
@@ -61,13 +61,15 @@ paths:
                 $ref: '#/components/schemas/TaskResponseDto'
 components:
   schemas:
-    CreateTaskDto:
+    TaskDto:
       type: object
       required:
         - title
         - scheduleDate
         - status
       properties:
+        id:
+          type: integer
         title:
           type: string
         description:
