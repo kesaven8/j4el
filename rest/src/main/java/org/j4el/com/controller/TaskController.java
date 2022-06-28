@@ -2,18 +2,14 @@ package org.j4el.com.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.j4el.com.api.TaskApi;
-import org.j4el.com.entity.Task;
 import org.j4el.com.model.CreateTaskDto;
-import org.j4el.com.model.TaskDto;
+import org.j4el.com.model.TaskResponseDto;
 import org.j4el.com.service.TaskService;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
-import java.util.List;
 
 @Validated
 @RestController
@@ -27,12 +23,7 @@ public class TaskController implements TaskApi {
     }
 
     @Override
-    public ResponseEntity<List<TaskDto>> getTask(String pageNumber, String pageSize, String groupBy, String sortBy) {
-        return TaskApi.super.getTask(pageNumber, pageSize, groupBy, sortBy);
-    }
-
-    @GetMapping("/get")
-    public Page<Task> getPage() {
-        return taskService.findTask();
+    public ResponseEntity<TaskResponseDto> getTask(Integer pageNumber, Integer pageSize, String groupBy, String sortBy) {
+        return ResponseEntity.ok(taskService.findTask(pageNumber, pageSize, groupBy, sortBy));
     }
 }

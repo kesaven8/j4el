@@ -46,21 +46,19 @@ paths:
           required: true
           in: query
           schema:
-            type: string
+            type: integer
         - name: pageSize
           in: query
           required: true
           schema:
-            type: string
+            type: integer
       responses:
         '200':
           description: Get all Tasks
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TaskDto'
+                $ref: '#/components/schemas/TaskResponseDto'
 components:
   schemas:
     CreateTaskDto:
@@ -81,18 +79,16 @@ components:
           type: string
         status:
           type: string
-    TaskDto:
+    TaskResponseDto:
       type: object
       properties:
-        title:
-          type: string
-        description:
-          type: string
-        scheduledDate:
-          type: string
-          format: date
-        location:
-          type: string
-        status:
-          type: string
-
+        totalPages:
+          type: integer
+        totalElements:
+          type: integer
+        pageNumber:
+          type: integer
+        pageSize:
+          type: integer
+        taskDto:
+          type: object
