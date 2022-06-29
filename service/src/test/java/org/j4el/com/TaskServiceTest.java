@@ -59,7 +59,6 @@ public class TaskServiceTest {
     @Test
     public void testCreateTaskTitleExist() {
         TaskDto taskDto = getTaskDto(LocalDate.now());
-
         Mockito.when(taskRepository.existsTaskByTitle("Title")).thenReturn(true);
         assertThatExceptionOfType(TaskException.class).isThrownBy(() -> taskService.createTask(taskDto));
     }

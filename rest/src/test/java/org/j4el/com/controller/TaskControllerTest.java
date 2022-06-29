@@ -1,10 +1,9 @@
 package org.j4el.com.controller;
 
-import org.assertj.core.api.Assert;
 import org.assertj.core.api.Assertions;
 import org.j4el.com.model.TaskDto;
+import org.j4el.com.model.TaskResponseDto;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -23,7 +22,7 @@ public class TaskControllerTest {
     private TestRestTemplate restTemplate = new TestRestTemplate();
 
     @Test
-    public void exampleTest() {
+    public void saveTaskTest() {
         TaskDto taskDto = new TaskDto();
         taskDto.setScheduledDate(LocalDate.now());
         taskDto.setDescription("This is a description");
@@ -32,5 +31,23 @@ public class TaskControllerTest {
         taskDto.setTitle("Title");
         var result = restTemplate.postForEntity("http://localhost:" + port + "/task/create", taskDto, Object.class);
         Assertions.assertThat(result.getStatusCode().is2xxSuccessful()).isEqualTo(true);
+    }
+
+    @Test
+    public void saveTaskDateInThePastTest() {
+        TaskDto taskDto = new TaskDto();
+        taskDto.setScheduledDate(LocalDate.now().minusDays(1L));
+        taskDto.setDescription("This is a description");
+        taskDto.setLocation("Location");
+        taskDto.setStatus("COMPLETED");
+        taskDto.setTitle("Title");
+        var result = restTemplate.postForEntity("http://localhost:" + port + "/task/create", taskDto, String.class);
+        Assertions.assertThat(result.getStatusCode().isError()).isEqualTo(true);
+    }
+
+    @Test
+    public void getTask() {
+        var reponse = restTemplate.getForEntity("http://localhost:" + port + "/task?pageNumber=0&pageSize=10", TaskResponseDto.class);
+        var body = reponse.getBody();
     }
 }
