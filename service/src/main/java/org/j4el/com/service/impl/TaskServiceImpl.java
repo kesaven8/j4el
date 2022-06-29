@@ -62,7 +62,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void checkScheduleDateIsAfter(TaskDto taskDto) {
-        if (LocalDate.now().isAfter(taskDto.getScheduledDate()) || !LocalDate.now().isEqual(taskDto.getScheduledDate())) {
+        if (taskDto.getScheduledDate().isBefore(LocalDate.now()) || !LocalDate.now().isEqual(taskDto.getScheduledDate())) {
             throw new TaskException(TASK_IN_PAST.name());
         }
     }
