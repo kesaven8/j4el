@@ -9,4 +9,8 @@ public interface TaskService {
     Task createTask(TaskDto createTaskDto);
 
     TaskResponseDto findTask(Integer pageNumber, Integer pageSize, String groupBy, String sortBy);
+
+    Task updateTask(String id, TaskDto taskDto);
+
+    void deleteTask(String id);
 }
