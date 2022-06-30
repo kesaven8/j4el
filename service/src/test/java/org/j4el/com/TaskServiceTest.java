@@ -70,6 +70,16 @@ public class TaskServiceTest {
     }
 
     @Test
+    public void testCreateTaskScheduleDateAfter() {
+        TaskDto taskDto = getTaskDto(LocalDate.now().plus(1, ChronoUnit.DAYS));
+        Mockito.when(taskRepository.existsTaskByTitle("Title")).thenReturn(false);
+        Mockito.when(taskMapper.maptoEntity(taskDto)).thenReturn(buildEntity());
+        Mockito.when(taskRepository.save(Mockito.any())).thenReturn(getSavedTaskEntity());
+        var task = taskService.createTask(taskDto);
+        assertThat(task.getId()).isNotNull();
+    }
+
+    @Test
     public void testUpdateTaskSuccess() {
         task = getTaskDto(LocalDate.now().plusDays(10));
         task.setStatus(Task.Status.NOT_COMPLETED.toString());

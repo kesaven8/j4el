@@ -11,7 +11,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.Objects;
 
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -47,8 +48,27 @@ public class TaskControllerTest {
     }
 
     @Test
+    public void saveTaskDateInTheFuture() {
+        TaskDto taskDto = new TaskDto();
+        taskDto.setScheduledDate(LocalDate.now().plusDays(1L));
+        taskDto.setDescription("This is a description");
+        taskDto.setLocation("Location");
+        taskDto.setStatus("COMPLETED");
+        taskDto.setTitle("Title 0001");
+        var result = restTemplate.postForEntity("http://localhost:" + port + "/task/create", taskDto, Object.class);
+        Assertions.assertThat(result.getStatusCode().is2xxSuccessful()).isEqualTo(true);
+    }
+
+    @Test
     public void getTask() {
-        var reponse = restTemplate.getForEntity("http://localhost:" + port + "/task?pageNumber=0&pageSize=10", TaskResponseDto.class);
-        Assertions.assertThat(reponse.getBody().getTaskDto()).isInstanceOf(LinkedHashMap.class);
+        var response = restTemplate.getForEntity("http://localhost:" + port + "/task?pageNumber=0&pageSize=10", TaskResponseDto.class);
+        Assertions.assertThat(Objects.requireNonNull(response.getBody()).getTaskDto()).isInstanceOf(ArrayList.class);
+        Assertions.assertThat(response.getBody().getPageNumber()).isNotNull();
+    }
+
+    @Test
+    public void getTaskPageNumberMissing() {
+        var response = restTemplate.getForEntity("http://localhost:" + port + "/task", TaskResponseDto.class);
+        Assertions.assertThat(response.getStatusCode().isError()).isEqualTo(true);
     }
 }

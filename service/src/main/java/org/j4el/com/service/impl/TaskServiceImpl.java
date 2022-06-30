@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -47,7 +48,8 @@ public class TaskServiceImpl implements TaskService {
         var pageTasks = taskRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by(Optional.ofNullable(sortBy).orElse(DEFAULT_GROUP_BY))));
         TaskResponseDto taskResponseDto = new TaskResponseDto();
         taskResponseDto.setTaskDto(pageTasks.stream().map(taskMapper::mapToDto)
-                .collect(Collectors.groupingBy(getGroupingClassifier().getOrDefault(groupBy, TaskDto::getScheduledDate))));
+                .collect(Collectors.groupingBy(getGroupingClassifier().getOrDefault(groupBy, TaskDto::getScheduledDate))).values()
+                .stream().flatMap(Collection::stream).collect(Collectors.toList()));
         taskResponseDto.setPageNumber(pageTasks.getPageable().getPageNumber());
         taskResponseDto.setTotalPages(pageTasks.getTotalPages());
         taskResponseDto.setPageSize(pageTasks.getPageable().getPageSize());
@@ -63,7 +65,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void checkScheduleDateIsAfter(TaskDto taskDto) {
-        if (taskDto.getScheduledDate().isBefore(LocalDate.now()) || !LocalDate.now().isEqual(taskDto.getScheduledDate())) {
+        if (LocalDate.now().isAfter(taskDto.getScheduledDate())) {
             throw new TaskException(TASK_IN_PAST.name());
         }
     }
