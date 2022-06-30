@@ -105,6 +105,11 @@ public class TaskServiceTest {
         taskService.deleteTask("123");
         Mockito.verify(taskRepository, Mockito.times(1)).delete(Mockito.any());
     }
+    @Test
+    public void testDeleteTaskStatusCompleted() {
+        Mockito.when(taskRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(buildEntity()));
+        assertThatExceptionOfType(TaskException.class).isThrownBy(() -> taskService.updateTask("123", task));
+    }
 
     private Task getSavedTaskEntity() {
         return Task.builder()

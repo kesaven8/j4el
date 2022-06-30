@@ -1,9 +1,9 @@
 insert into task (description, location, scheduled_date, status, title)
-values ('description', 'location', '2022-06-29T15:46:25.790991', 'COMPLETED', 'Title 001');
+values ('description', 'location', '2022-07-29T15:46:25.790991', 'NOT_COMPLETED', 'Title 001');
 insert into task (description, location, scheduled_date, status, title)
-values ('description', 'location', '2022-06-29T15:46:25.790991', 'COMPLETED', 'Title 002');
+values ('description', 'location', '2022-07-29T15:46:25.790991', 'NOT_COMPLETED', 'Title 002');
 insert into task (description, location, scheduled_date, status, title)
-values ('description', 'location', '2022-06-29T15:46:25.790991', 'COMPLETED', 'Title 003');
+values ('description', 'location', '2022-08-29T15:46:25.790991', 'COMPLETED', 'Title 003');
 insert into task (description, location, scheduled_date, status, title)
 values ('description', 'location', '2022-06-29T15:46:25.790991', 'COMPLETED', 'Title 004');
 insert into task (description, location, scheduled_date, status, title)

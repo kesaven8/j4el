@@ -104,6 +104,9 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void deleteTask(String id) {
         var task = taskRepository.findById(Long.parseLong(id)).orElseThrow(() -> new TaskException(ID_NOT_FOUND.name()));
+        if(Task.Status.COMPLETED.equals(task.getStatus())){
+            throw new TaskException(CANNOT_DELETE_COMPLETED_TASK.name());
+        }
         taskRepository.delete(task);
     }
 }
