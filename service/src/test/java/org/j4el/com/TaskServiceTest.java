@@ -80,6 +80,11 @@ public class TaskServiceTest {
     }
 
     @Test
+    public void getTask() {
+
+    }
+
+    @Test
     public void testUpdateTaskSuccess() {
         task = getTaskDto(LocalDate.now().plusDays(10));
         task.setStatus(Task.Status.NOT_COMPLETED.toString());

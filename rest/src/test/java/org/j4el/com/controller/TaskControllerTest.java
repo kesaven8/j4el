@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Objects;
 
 @ActiveProfiles("test")
@@ -62,7 +62,7 @@ public class TaskControllerTest {
     @Test
     public void getTask() {
         var response = restTemplate.getForEntity("http://localhost:" + port + "/task?pageNumber=0&pageSize=10", TaskResponseDto.class);
-        Assertions.assertThat(Objects.requireNonNull(response.getBody()).getTaskDto()).isInstanceOf(ArrayList.class);
+        Assertions.assertThat(Objects.requireNonNull(response.getBody()).getTaskDto()).isInstanceOf(LinkedHashMap.class);
         Assertions.assertThat(response.getBody().getPageNumber()).isNotNull();
     }
 

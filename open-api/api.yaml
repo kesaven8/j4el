@@ -137,6 +137,4 @@ components:
         pageSize:
           type: integer
         taskDto:
-          type: array
-          items:
-            $ref: '#/components/schemas/TaskDto'
+          type: object
