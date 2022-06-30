@@ -11,6 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.properties")
@@ -48,6 +49,6 @@ public class TaskControllerTest {
     @Test
     public void getTask() {
         var reponse = restTemplate.getForEntity("http://localhost:" + port + "/task?pageNumber=0&pageSize=10", TaskResponseDto.class);
-        var body = reponse.getBody();
+        Assertions.assertThat(reponse.getBody().getTaskDto()).isInstanceOf(LinkedHashMap.class);
     }
 }
