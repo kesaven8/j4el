@@ -13,14 +13,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.j4el.com.exception.ExceptionMessage.TASK_IN_PAST;
-import static org.j4el.com.exception.ExceptionMessage.TITLE_ALREADY_EXIST;
+import static org.j4el.com.exception.ExceptionMessage.*;
 
 @Service
 @Transactional
@@ -43,7 +44,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     public TaskResponseDto findTask(Integer pageNumber, Integer pageSize, String groupBy, String sortBy) {
-        var pageTasks = taskRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by(Optional.ofNullable(sortBy).orElse("scheduledDate"))));
+        var pageTasks = taskRepository.findAll(PageRequest.of(pageNumber, pageSize, Sort.by(Optional.ofNullable(sortBy).orElse(DEFAULT_GROUP_BY))));
         TaskResponseDto taskResponseDto = new TaskResponseDto();
         taskResponseDto.setTaskDto(pageTasks.stream().map(taskMapper::mapToDto)
                 .collect(Collectors.groupingBy(getGroupingClassifier().getOrDefault(groupBy, TaskDto::getScheduledDate))));
@@ -62,7 +63,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void checkScheduleDateIsAfter(TaskDto taskDto) {
-        if (LocalDate.now().isAfter(taskDto.getScheduledDate()) || !LocalDate.now().isEqual(taskDto.getScheduledDate())) {
+        if (taskDto.getScheduledDate().isBefore(LocalDate.now()) || !LocalDate.now().isEqual(taskDto.getScheduledDate())) {
             throw new TaskException(TASK_IN_PAST.name());
         }
     }
@@ -74,5 +75,35 @@ public class TaskServiceImpl implements TaskService {
         groupingClassifier.put("location", TaskDto::getLocation);
         groupingClassifier.put("status", TaskDto::getStatus);
         return groupingClassifier;
+    }
+
+    @Override
+    public Task updateTask(String id, TaskDto taskDto) {
+        var task = taskRepository.findById(Long.parseLong(id)).orElseThrow(() -> new TaskException(ID_NOT_FOUND.name()));
+
+        if (Task.Status.COMPLETED.equals(task.getStatus())) {
+            throw new TaskException(CANNOT_UPDATE_TASK.name());
+        } else {
+            if (task.getScheduledDate().toLocalDate().isBefore(LocalDate.now())) {
+                throw new TaskException(CANNOT_UPDATE_TASK.name());
+            }
+        }
+        if (!task.getTitle().equals(taskDto.getTitle()) && taskRepository.existsTaskByTitle(taskDto.getTitle())) {
+            throw new TaskException(TITLE_ALREADY_EXIST.name());
+        }
+
+        task.setTitle(taskDto.getTitle());
+        task.setLocation(taskDto.getLocation());
+        task.setDescription(taskDto.getDescription());
+        task.setUpdateOn(LocalDateTime.now());
+        task.setStatus(Task.Status.valueOf(taskDto.getStatus()));
+        task.setScheduledDate(LocalDateTime.of(taskDto.getScheduledDate(), LocalTime.now()));
+        return taskRepository.save(task);
+    }
+
+    @Override
+    public void deleteTask(String id) {
+        var task = taskRepository.findById(Long.parseLong(id)).orElseThrow(() -> new TaskException(ID_NOT_FOUND.name()));
+        taskRepository.delete(task);
     }
 }

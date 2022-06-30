@@ -16,7 +16,9 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -29,6 +31,8 @@ public class TaskServiceTest {
 
     @Mock
     private TaskMapper taskMapper;
+
+    private TaskDto task;
 
     @InjectMocks
     private TaskService taskService = new TaskServiceImpl(taskMapper, taskRepository);
@@ -55,7 +59,6 @@ public class TaskServiceTest {
     @Test
     public void testCreateTaskTitleExist() {
         TaskDto taskDto = getTaskDto(LocalDate.now());
-
         Mockito.when(taskRepository.existsTaskByTitle("Title")).thenReturn(true);
         assertThatExceptionOfType(TaskException.class).isThrownBy(() -> taskService.createTask(taskDto));
     }
@@ -66,12 +69,35 @@ public class TaskServiceTest {
         assertThatExceptionOfType(TaskException.class).isThrownBy(() -> taskService.createTask(taskDto));
     }
 
+    @Test
+    public void testUpdateTaskSuccess() {
+        task = getTaskDto(LocalDate.now().plusDays(10));
+        task.setStatus(Task.Status.NOT_COMPLETED.toString());
+        Mockito.when(taskRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(getSavedTaskEntity()));
+        Mockito.when(taskRepository.save(Mockito.any())).thenReturn(getSavedTaskEntity());
+        var updatedTask = taskService.updateTask("123", task);
+        assertThat(updatedTask.equals(getSavedTaskEntity()));
+    }
+
+    @Test
+    public void testUpdateTaskStatusCompleted() {
+        assertThatExceptionOfType(TaskException.class).isThrownBy(() -> taskService.updateTask("123", task));
+    }
+
+    @Test
+    public void testDeleteTaskSucccess() {
+        Mockito.when(taskRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(getSavedTaskEntity()));
+        taskService.deleteTask("123");
+        Mockito.verify(taskRepository, Mockito.times(1)).delete(Mockito.any());
+    }
+
     private Task getSavedTaskEntity() {
         return Task.builder()
                 .id(1L)
                 .title("Title")
                 .description("This is a description")
-                .status(Task.Status.COMPLETED)
+                .status(Task.Status.NOT_COMPLETED)
+                .scheduledDate(LocalDateTime.now())
                 .build();
     }
 

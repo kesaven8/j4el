@@ -27,6 +27,47 @@ paths:
           description: invalid input, object invalid
         409:
           description: an existing item already exists
+  /task/update/{id}:
+    post:
+      operationId: updateTask
+      parameters:
+        - in: path
+          name: id
+          description: unique task id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: update a task
+        required: true
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/TaskDto'
+      responses:
+        201:
+          description: Task updated Successfully
+          content:
+            application/json:
+              schema:
+                type: object
+  /task/delete/{id}:
+    delete:
+      operationId: deleteTask
+      parameters:
+        - in: path
+          name: id
+          description: unique task id
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: Task deleted Successfully
+          content:
+            application/json:
+              schema:
+                type: object
   /task:
     get:
       operationId: getTask
@@ -81,6 +122,9 @@ components:
           type: string
         status:
           type: string
+        updateOn:
+          type: string
+          format: date
     TaskResponseDto:
       type: object
       properties:
