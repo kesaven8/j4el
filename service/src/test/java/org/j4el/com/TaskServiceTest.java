@@ -4,6 +4,7 @@ import org.j4el.com.entity.Task;
 import org.j4el.com.exception.TaskException;
 import org.j4el.com.mapper.TaskMapper;
 import org.j4el.com.model.TaskDto;
+import org.j4el.com.model.TaskResponseDto;
 import org.j4el.com.repository.TaskRepository;
 import org.j4el.com.service.TaskService;
 import org.j4el.com.service.impl.TaskServiceImpl;
@@ -14,10 +15,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,9 +55,9 @@ public class TaskServiceTest {
         TaskDto taskDto = getTaskDto(LocalDate.now());
 
         Mockito.when(taskRepository.existsTaskByTitle("Title")).thenReturn(false);
-        Mockito.when(taskMapper.maptoEntity(taskDto)).thenReturn(buildEntity());
+        Mockito.when(taskMapper.maptoEntity(taskDto)).thenReturn(buildEntityToSave());
         Mockito.when(taskRepository.save(Mockito.any())).thenReturn(getSavedTaskEntity());
-
+        Mockito.when(taskMapper.maptoEntity(taskDto)).thenReturn(buildEntityToSave());
         var task = taskService.createTask(taskDto);
         assertThat(task.getId()).isNotNull();
     }
@@ -73,15 +79,10 @@ public class TaskServiceTest {
     public void testCreateTaskScheduleDateAfter() {
         TaskDto taskDto = getTaskDto(LocalDate.now().plus(1, ChronoUnit.DAYS));
         Mockito.when(taskRepository.existsTaskByTitle("Title")).thenReturn(false);
-        Mockito.when(taskMapper.maptoEntity(taskDto)).thenReturn(buildEntity());
+        Mockito.when(taskMapper.maptoEntity(taskDto)).thenReturn(buildEntityToSave());
         Mockito.when(taskRepository.save(Mockito.any())).thenReturn(getSavedTaskEntity());
         var task = taskService.createTask(taskDto);
         assertThat(task.getId()).isNotNull();
-    }
-
-    @Test
-    public void getTask() {
-
     }
 
     @Test
@@ -105,9 +106,10 @@ public class TaskServiceTest {
         taskService.deleteTask("123");
         Mockito.verify(taskRepository, Mockito.times(1)).delete(Mockito.any());
     }
+
     @Test
     public void testDeleteTaskStatusCompleted() {
-        Mockito.when(taskRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(buildEntity()));
+        Mockito.when(taskRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(buildEntityToSave()));
         assertThatExceptionOfType(TaskException.class).isThrownBy(() -> taskService.updateTask("123", task));
     }
 
@@ -117,12 +119,13 @@ public class TaskServiceTest {
                 .title("Title")
                 .description("This is a description")
                 .status(Task.Status.NOT_COMPLETED)
+                .location("location")
                 .scheduledDate(LocalDateTime.now())
                 .build();
     }
 
 
-    private Task buildEntity() {
+    private Task buildEntityToSave() {
         return Task.builder()
                 .title("Title not exist")
                 .description("This is a description")
